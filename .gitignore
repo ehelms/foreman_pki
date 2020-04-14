@@ -1,0 +1,16 @@
+/.bundle/
+/.yardoc
+/_yardoc/
+/coverage/
+/doc/
+/pkg/
+/spec/reports/
+/tmp/
+/pki-build/
+etc/
+
+Gemfile.lock
+
+*.swp
+*.swo
+*.swn

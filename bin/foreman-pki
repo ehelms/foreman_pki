@@ -1,0 +1,12 @@
+#!/usr/bin/env ruby
+
+require 'clamp'
+require_relative '../lib/foreman_pki.rb'
+
+class MainCommand < Clamp::Command
+  subcommand "generate", "Generate certificates", ForemanPki::Command::GenerateCommand
+  subcommand "view", "View a certificate", ForemanPki::Command::ViewCommand
+  subcommand "deploy", "Deploy a certificate", ForemanPki::Command::DeployCommand
+end
+
+MainCommand.run
