@@ -1,0 +1,3 @@
+---
+generate:
+  directory: '/etc/foreman_pki'

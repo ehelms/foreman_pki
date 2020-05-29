@@ -6,8 +6,10 @@
 /pkg/
 /spec/reports/
 /tmp/
-/pki-build/
+/foreman_pki/
 etc/
+
+config.yaml
 
 Gemfile.lock
 
