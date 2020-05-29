@@ -10,11 +10,10 @@ module ForemanPki
       FileUtils.mkdir_p(base_dir)
       FileUtils.mkdir_p(certs_dir)
       FileUtils.mkdir_p(keys_dir)
-      FileUtils.mkdir_p(requests_dir)
     end
 
     def base_dir
-      "pki-build"
+      "foreman_pki"
     end
 
     def certs_dir
@@ -23,10 +22,6 @@ module ForemanPki
 
     def keys_dir
       "#{base_dir}/private"
-    end
-
-    def requests_dir
-      "#{base_dir}/requests"
     end
 
   end
