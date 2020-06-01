@@ -12,7 +12,7 @@ module ForemanPki
         end
       end
 
-      class ServerCommand < Clamp::Command
+      class ApacheCommand < Clamp::Command
         parameter "HOSTNAME", "Hostname to generate server certificate for"
 
         def execute
@@ -20,13 +20,13 @@ module ForemanPki
           build_env.create
 
           ca = ForemanPki::CertificateAuthority.new(build_env)
-          server = ForemanPki::ServerCertificate.new(build_env)
-          server.create(hostname, ca)
+          server = ForemanPki::ApacheCertificate.new(build_env)
+          server.create(hostname, 'apache', ca)
         end
       end
 
       subcommand "ca", "Generate CA certificate", ForemanPki::Command::GenerateCommand::CACommand
-      subcommand "server", "Generate server certificate", ForemanPki::Command::GenerateCommand::ServerCommand
+      subcommand "apache", "Generate Apache server certificate", ForemanPki::Command::GenerateCommand::ApacheCommand
 
     end
   end

@@ -3,8 +3,11 @@ require 'fileutils'
 module ForemanPki
   class DeployEnvironment
 
-    def initialize(service)
+    attr_reader :service
+
+    def initialize(service, config = Config.new)
       @service = service
+      @config = config.config
     end
 
     def create
@@ -14,7 +17,7 @@ module ForemanPki
     end
 
     def base_dir
-      "etc/#{@service}/pki"
+      "#{@config.deploy.base_dir}/#{@service}/pki"
     end
 
     def certs_dir

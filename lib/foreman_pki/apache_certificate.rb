@@ -1,21 +1,9 @@
 module ForemanPki
-  class ServerCertificate < KeyPair
+  class ApacheCertificate < KeyPair
 
-    def initialize(build_env = BuildEnvironment.new, deploy_env = DeployEnvironment.new('foreman'))
-      @build_env = build_env
-      @deploy_env = deploy_env
-    end
-
-    def key_name
-      "#{@hostname}.key"
-    end
-
-    def cert_name
-      "#{@hostname}.crt"
-    end
-
-    def create(hostname, ca)
+    def create(hostname, service, ca)
       @hostname = hostname
+      @service = service
       @ca = ca
 
       private_key

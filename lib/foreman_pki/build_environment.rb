@@ -14,7 +14,7 @@ module ForemanPki
     end
 
     def base_dir
-      @config.generate.directory
+      @config.generate.base_dir
     end
 
     def certs_dir

@@ -7,14 +7,15 @@ module ForemanPki
     def initialize(build_env = BuildEnvironment.new, deploy_env = DeployEnvironment.new('foreman'))
       @build_env = build_env
       @deploy_env = deploy_env
+      @service = deploy_env.service
     end
 
     def key_name
-      fail NotImplementedError
+      "#{@service}.key"
     end
 
     def cert_name
-      fail NotImplementedError
+      "#{@service}.crt"
     end
 
     def create

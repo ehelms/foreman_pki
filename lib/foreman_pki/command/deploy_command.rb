@@ -14,12 +14,14 @@ module ForemanPki
           ca.deploy
         end
 
-        if @certificate == 'foreman'
-          deploy_env = ForemanPki::DeployEnvironment.new('foreman')
+        if @certificate == 'apache'
+          deploy_env = ForemanPki::DeployEnvironment.new('apache')
           deploy_env.create
 
-          foreman = ForemanPki::ServerCertificate.new(build_env, deploy_env)
-          foreman.deploy
+          ca = ForemanPki::CertificateAuthority.new(build_env, deploy_env)
+
+          apache = ForemanPki::ApacheCertificate.new(build_env, deploy_env)
+          apache.deploy
         end
       end
     end
