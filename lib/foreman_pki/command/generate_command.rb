@@ -13,7 +13,11 @@ module ForemanPki
       end
 
       class ApacheCommand < Clamp::Command
-        parameter "HOSTNAME", "Hostname to generate server certificate for"
+        option "--hostname", "HOSTNAME", "Specify the hostname for certificate (defaults to current hostname)"
+
+        def default_hostname
+          `hostname`
+        end
 
         def execute
           build_env = ForemanPki::BuildEnvironment.new
@@ -26,7 +30,11 @@ module ForemanPki
       end
 
       class ForemanClientCommand < Clamp::Command
-        parameter "HOSTNAME", "Hostname to generate server certificate for"
+        option "--hostname", "HOSTNAME", "Specify the hostname for certificate (defaults to current hostname)"
+
+        def default_hostname
+          `hostname`
+        end
 
         def execute
           build_env = ForemanPki::BuildEnvironment.new

@@ -21,7 +21,7 @@ module ForemanPki
       root_ca = OpenSSL::X509::Certificate.new
       root_ca.version = 2 # cf. RFC 5280 - to make it a "v3" certificate
       root_ca.serial = 1
-      root_ca.subject = OpenSSL::X509::Name.parse "/DC=org/DC=Foreman/CN=Certificate Authority"
+      root_ca.subject = OpenSSL::X509::Name.parse "CN=Foreman CA"
       root_ca.issuer = root_ca.subject
       root_ca.public_key = private_key.public_key
       root_ca.not_before = Time.now

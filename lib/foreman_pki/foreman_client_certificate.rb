@@ -24,7 +24,7 @@ module ForemanPki
 
       cert = OpenSSL::X509::Certificate.new
       cert.version = 2
-      cert.subject = OpenSSL::X509::Name.parse "/DC=org/DC=Foreman/CN=#{@hostname}"
+      cert.subject = OpenSSL::X509::Name.parse "CN=#{@hostname}"
       cert.issuer = @ca.certificate.subject # root CA is the issuer
       cert.public_key = private_key.public_key
       cert.not_before = Time.now
