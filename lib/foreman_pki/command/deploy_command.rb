@@ -23,6 +23,16 @@ module ForemanPki
           apache = ForemanPki::ApacheCertificate.new(build_env, deploy_env)
           apache.deploy
         end
+
+        if @certificate == 'foreman-client'
+          deploy_env = ForemanPki::DeployEnvironment.new('foreman')
+          deploy_env.create
+
+          ca = ForemanPki::CertificateAuthority.new(build_env, deploy_env)
+
+          client = ForemanPki::ForemanClientCertificate.new(build_env, deploy_env)
+          client.deploy
+        end
       end
     end
   end

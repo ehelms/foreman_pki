@@ -1,5 +1,5 @@
 module ForemanPki
-  class ApacheCertificate < KeyPair
+  class ForemanClientCertificate < KeyPair
 
     def create(hostname, service, ca)
       @hostname = hostname
@@ -8,6 +8,14 @@ module ForemanPki
 
       private_key
       certificate
+    end
+
+    def key_name
+      "client.key"
+    end
+
+    def cert_name
+      "client.crt"
     end
 
     def certificate
@@ -28,7 +36,7 @@ module ForemanPki
 
       cert.add_extension(ef.create_extension("basicConstraints","CA:FALSE", true))
       cert.add_extension(ef.create_extension("keyUsage","digitalSignature,keyEncipherment", true))
-      cert.add_extension(ef.create_extension("extendedKeyUsage","serverAuth,clientAuth", true))
+      cert.add_extension(ef.create_extension("extendedKeyUsage","clientAuth", true))
       cert.add_extension(ef.create_extension("subjectKeyIdentifier", "hash", false))
       cert.sign(private_key, OpenSSL::Digest::SHA256.new)
 
