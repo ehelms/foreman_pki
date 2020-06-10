@@ -45,20 +45,5 @@ module ForemanPki
       puts certificate.to_text
     end
 
-    def deploy
-      cert_path = "#{@deploy_env.certs_dir}/#{cert_name}"
-      key_path = "#{@deploy_env.keys_dir}/#{key_name}"
-
-      File.delete(cert_path) if File.exist?(cert_path)
-      File.delete(key_path) if File.exist?(key_path)
-
-      File.open("#{@deploy_env.certs_dir}/#{cert_name}", 'w', 0440) do |file|
-        file.write(certificate.to_pem)
-      end
-      File.open("#{@deploy_env.keys_dir}/#{key_name}", 'w', 0400) do |file|
-        file.write(private_key.to_pem)
-      end
-    end
-
   end
 end

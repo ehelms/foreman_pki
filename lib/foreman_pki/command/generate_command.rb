@@ -4,10 +4,10 @@ module ForemanPki
 
       class CACommand < Clamp::Command
         def execute
-          build_env = ForemanPki::BuildEnvironment.new
+          build_env = ForemanPki::BuildEnvironment.new('ca')
           build_env.create
 
-          ca = ForemanPki::CertificateAuthority.new(build_env)
+          ca = ForemanPki::Certificate::CertificateAuthority.new(build_env)
           ca.create
         end
       end
@@ -20,11 +20,14 @@ module ForemanPki
         end
 
         def execute
-          build_env = ForemanPki::BuildEnvironment.new
+          build_env = ForemanPki::BuildEnvironment.new('ca')
+          build_env.create
+          ca = ForemanPki::Certificate::CertificateAuthority.new(build_env)
+
+          build_env = ForemanPki::BuildEnvironment.new('apache')
           build_env.create
 
-          ca = ForemanPki::CertificateAuthority.new(build_env)
-          apache = ForemanPki::ApacheCertificate.new(build_env)
+          apache = ForemanPki::Certificate::Apache.new(build_env)
           apache.create(hostname, 'apache', ca)
         end
       end
@@ -37,11 +40,14 @@ module ForemanPki
         end
 
         def execute
-          build_env = ForemanPki::BuildEnvironment.new
+          build_env = ForemanPki::BuildEnvironment.new('ca')
+          build_env.create
+          ca = ForemanPki::Certificate::CertificateAuthority.new(build_env)
+
+          build_env = ForemanPki::BuildEnvironment.new('foreman')
           build_env.create
 
-          ca = ForemanPki::CertificateAuthority.new(build_env)
-          client = ForemanPki::ForemanClientCertificate.new(build_env)
+          client = ForemanPki::Certificate::ForemanClient.new(build_env)
           client.create(hostname, 'foreman', ca)
         end
       end

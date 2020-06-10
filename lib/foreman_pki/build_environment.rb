@@ -3,8 +3,9 @@ require 'fileutils'
 module ForemanPki
   class BuildEnvironment
 
-    def initialize(config = Config.new)
+    def initialize(namespace, config = Config.new)
       @config = config.config
+      @namespace = namespace
     end
 
     def create
@@ -18,11 +19,11 @@ module ForemanPki
     end
 
     def certs_dir
-      "#{base_dir}/certs"
+      "#{base_dir}/#{@namespace}"
     end
 
     def keys_dir
-      "#{base_dir}/private"
+      "#{base_dir}/#{@namespace}"
     end
 
   end
