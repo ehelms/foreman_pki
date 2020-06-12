@@ -17,11 +17,12 @@ module ForemanPki
 
         cert = OpenSSL::X509::Certificate.new
         cert.version = 2
+        cert.serial = rand(2**128)
         cert.subject = OpenSSL::X509::Name.parse "CN=#{@hostname}"
         cert.issuer = @ca.certificate.subject # root CA is the issuer
         cert.public_key = private_key.public_key
         cert.not_before = Time.now
-        cert.not_after = EXPIRATION
+        cert.not_after = cert.not_before + EXPIRATION
 
         ef = OpenSSL::X509::ExtensionFactory.new
         ef.subject_certificate = cert
@@ -31,9 +32,9 @@ module ForemanPki
         cert.add_extension(ef.create_extension("keyUsage","digitalSignature,keyEncipherment", true))
         cert.add_extension(ef.create_extension("extendedKeyUsage","serverAuth,clientAuth", true))
         cert.add_extension(ef.create_extension("subjectKeyIdentifier", "hash", false))
-        cert.sign(private_key, OpenSSL::Digest::SHA256.new)
+        cert.sign(@ca.private_key, OpenSSL::Digest::SHA256.new)
 
-        File.open("#{@build_env.certs_dir}/#{cert_name}", 'w', 0440) do |file|
+        File.open("#{@build_env.certs_dir}/#{cert_name}", 'w', 0444) do |file|
           file.write(cert.to_pem)
         end
 

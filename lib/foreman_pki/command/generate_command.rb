@@ -52,9 +52,30 @@ module ForemanPki
         end
       end
 
+      class SmartProxyCommand < Clamp::Command
+        option "--hostname", "HOSTNAME", "Specify the hostname for certificate (defaults to current hostname)"
+
+        def default_hostname
+          `hostname`
+        end
+
+        def execute
+          build_env = ForemanPki::BuildEnvironment.new('ca')
+          build_env.create
+          ca = ForemanPki::Certificate::CertificateAuthority.new(build_env)
+
+          build_env = ForemanPki::BuildEnvironment.new('smart-proxy')
+          build_env.create
+
+          client = ForemanPki::Certificate::SmartProxy.new(build_env)
+          client.create(hostname, 'smart-proxy', ca)
+        end
+      end
+
       subcommand "ca", "Generate CA certificate", ForemanPki::Command::GenerateCommand::CACommand
       subcommand "apache", "Generate Apache server certificate", ForemanPki::Command::GenerateCommand::ApacheCommand
       subcommand "foreman-client", "Generate Foreman client certificate", ForemanPki::Command::GenerateCommand::ForemanClientCommand
+      subcommand "smart-proxy", "Generate Smart Proxy certificate", ForemanPki::Command::GenerateCommand::SmartProxyCommand
 
     end
   end

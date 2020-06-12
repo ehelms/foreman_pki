@@ -3,6 +3,8 @@ require 'fileutils'
 module ForemanPki
   class BuildEnvironment
 
+    attr_reader :namespace
+
     def initialize(namespace, config = Config.new)
       @config = config.config
       @namespace = namespace

@@ -2,9 +2,8 @@ module ForemanPki
   module Certificate
     class CertificateAuthority < KeyPair
 
-      def initialize(build_env = BuildEnvironment.new, deploy_env = DeployEnvironment.new('foreman'))
+      def initialize(build_env = BuildEnvironment.new)
         @build_env = build_env
-        @deploy_env = deploy_env
       end
 
       def key_name
@@ -21,12 +20,12 @@ module ForemanPki
 
         root_ca = OpenSSL::X509::Certificate.new
         root_ca.version = 2 # cf. RFC 5280 - to make it a "v3" certificate
-        root_ca.serial = 1
+        root_ca.serial = rand(2**128)
         root_ca.subject = OpenSSL::X509::Name.parse "CN=Foreman CA"
         root_ca.issuer = root_ca.subject
         root_ca.public_key = private_key.public_key
         root_ca.not_before = Time.now
-        root_ca.not_after = EXPIRATION
+        root_ca.not_after = root_ca.not_before + EXPIRATION
 
         ef = OpenSSL::X509::ExtensionFactory.new
         ef.subject_certificate = root_ca
@@ -39,7 +38,7 @@ module ForemanPki
 
         root_ca.sign(private_key, OpenSSL::Digest::SHA256.new)
 
-        File.open("#{@build_env.certs_dir}/#{cert_name}", 'w', 0440) do |file|
+        File.open("#{@build_env.certs_dir}/#{cert_name}", 'w', 0444) do |file|
           file.write(root_ca.to_pem)
         end
 

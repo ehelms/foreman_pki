@@ -4,10 +4,9 @@ module ForemanPki
     KEY_LENGTH = 2048
     EXPIRATION = 2 * 365 * 24 * 60 * 60 # 2 years validity
 
-    def initialize(build_env = BuildEnvironment.new, deploy_env = DeployEnvironment.new('foreman'))
+    def initialize(build_env = BuildEnvironment.new)
       @build_env = build_env
-      @deploy_env = deploy_env
-      @service = deploy_env.service
+      @service = build_env.namespace
     end
 
     def key_name

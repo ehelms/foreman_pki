@@ -1,6 +1,6 @@
 module ForemanPki
   module Certificate
-    class ForemanClient < KeyPair
+    class SmartProxy < KeyPair
 
       def create(hostname, service, ca)
         @hostname = hostname
@@ -9,14 +9,6 @@ module ForemanPki
 
         private_key
         certificate
-      end
-
-      def key_name
-        "client.key"
-      end
-
-      def cert_name
-        "client.crt"
       end
 
       def certificate
