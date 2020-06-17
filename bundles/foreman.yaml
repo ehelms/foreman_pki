@@ -1,0 +1,5 @@
+---
+- service: apache
+- service: smart-proxy
+- service: foreman
+  cert: foreman-to-smart-proxy

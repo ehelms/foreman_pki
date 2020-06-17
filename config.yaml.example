@@ -4,3 +4,7 @@ generate:
 
 deploy:
   base_dir: '/etc'
+
+bundles:
+  - foreman
+  - katello

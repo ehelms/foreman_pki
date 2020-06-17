@@ -5,6 +5,7 @@ module ForemanPki
   class Config
 
     CONFIG_FILE = ENV['FOREMAN_PKI_CONFIG_FILE'] || "#{File.expand_path(File.dirname(__FILE__))}/../../config.yaml"
+    BUNDLE_DIR = "#{File.expand_path(File.dirname(__FILE__))}/../../bundles"
 
     def config
       if File.exist?(CONFIG_FILE)
@@ -12,6 +13,16 @@ module ForemanPki
       else
         @config = default_config
       end
+    end
+
+    def certificates
+      return @certificates unless @certificates.nil?
+
+      @certificates = config.bundles.collect do |bundle|
+        YAML.load_file("#{BUNDLE_DIR}/#{bundle}.yaml")
+      end
+
+      to_openstruct(@certificates.flatten)
     end
 
     def default_config

@@ -1,82 +1,45 @@
 module ForemanPki
   module Command
     class GenerateCommand < Clamp::Command
+      option "--common-name", "COMMON_NAME", "Specify the common name (CN) for certificate (defaults to current hostname)"
 
-      class CACommand < Clamp::Command
-        def execute
-          build_env = ForemanPki::BuildEnvironment.new('ca')
-          build_env.create
-
-          ca = ForemanPki::Certificate::CertificateAuthority.new(build_env)
-          ca.create
-        end
+      def default_common_name
+        `hostname`
       end
 
-      class ApacheCommand < Clamp::Command
-        option "--hostname", "HOSTNAME", "Specify the hostname for certificate (defaults to current hostname)"
+      def execute
+        config = Config.new
 
-        def default_hostname
-          `hostname`
-        end
+        build_env = ForemanPki::BuildEnvironment.new('ca')
+        build_env.create
+        ca = ForemanPki::CertificateAuthority.new(build_env)
 
-        def execute
-          build_env = ForemanPki::BuildEnvironment.new('ca')
-          build_env.create
-          ca = ForemanPki::Certificate::CertificateAuthority.new(build_env)
-
-          build_env = ForemanPki::BuildEnvironment.new('apache')
+        config.certificates.each do |cert|
+          build_env = ForemanPki::BuildEnvironment.new(cert.service)
           build_env.create
 
-          apache = ForemanPki::Certificate::Apache.new(build_env)
-          apache.create(hostname, 'apache', ca)
-        end
-      end
+          cert_name = cert.cert || cert.service
 
-      class ForemanClientCommand < Clamp::Command
-        option "--hostname", "HOSTNAME", "Specify the hostname for certificate (defaults to current hostname)"
+          key_pair = ForemanPki::KeyPair.new(cert_name, build_env)
 
-        def default_hostname
-          `hostname`
-        end
+          if cert.ca
+            key_pair.copy(ca)
+          else
+            key_pair.create(cert.common_name || common_name, ca)
 
-        def execute
-          build_env = ForemanPki::BuildEnvironment.new('ca')
-          build_env.create
-          ca = ForemanPki::Certificate::CertificateAuthority.new(build_env)
+            if cert.keystore
+              key_pair.keystore
+            end
 
-          build_env = ForemanPki::BuildEnvironment.new('foreman')
-          build_env.create
+            if cert.truststore
+              truststore_build_env = ForemanPki::BuildEnvironment.new(cert.truststore.service || cert.service)
+              truststore_build_env.create
 
-          client = ForemanPki::Certificate::ForemanClient.new(build_env)
-          client.create(hostname, 'foreman', ca)
+              key_pair.truststore(truststore_build_env)
+            end
+          end
         end
       end
-
-      class SmartProxyCommand < Clamp::Command
-        option "--hostname", "HOSTNAME", "Specify the hostname for certificate (defaults to current hostname)"
-
-        def default_hostname
-          `hostname`
-        end
-
-        def execute
-          build_env = ForemanPki::BuildEnvironment.new('ca')
-          build_env.create
-          ca = ForemanPki::Certificate::CertificateAuthority.new(build_env)
-
-          build_env = ForemanPki::BuildEnvironment.new('smart-proxy')
-          build_env.create
-
-          client = ForemanPki::Certificate::SmartProxy.new(build_env)
-          client.create(hostname, 'smart-proxy', ca)
-        end
-      end
-
-      subcommand "ca", "Generate CA certificate", ForemanPki::Command::GenerateCommand::CACommand
-      subcommand "apache", "Generate Apache server certificate", ForemanPki::Command::GenerateCommand::ApacheCommand
-      subcommand "foreman-client", "Generate Foreman client certificate", ForemanPki::Command::GenerateCommand::ForemanClientCommand
-      subcommand "smart-proxy", "Generate Smart Proxy certificate", ForemanPki::Command::GenerateCommand::SmartProxyCommand
-
     end
   end
 end
