@@ -1,5 +1,9 @@
 ---
-- service: apache
-- service: smart-proxy
-- service: foreman
-  cert: foreman-to-smart-proxy
+- cert_name: apache
+  service: apache
+
+- cert_name: smart-proxy
+  service: smart-proxy
+
+- cert_name: foreman-to-smart-proxy
+  service: foreman

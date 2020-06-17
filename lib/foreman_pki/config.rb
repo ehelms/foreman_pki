@@ -22,7 +22,8 @@ module ForemanPki
         YAML.load_file("#{BUNDLE_DIR}/#{bundle}.yaml")
       end
 
-      to_openstruct(@certificates.flatten)
+      @certificates = @certificates.flatten.sort { |a, b| a['cert_name'] <=> b['cert_name'] }
+      to_openstruct(@certificates)
     end
 
     def default_config

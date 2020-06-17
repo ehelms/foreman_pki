@@ -14,25 +14,23 @@ module ForemanPki
         build_env.create
         ca = ForemanPki::CertificateAuthority.new(build_env)
 
-        config.certificates.each do |cert|
+        config.certificates.each do |certificate|
           build_env = ForemanPki::BuildEnvironment.new(cert.service)
           build_env.create
 
-          cert_name = cert.cert || cert.service
+          key_pair = ForemanPki::KeyPair.new(certificate.cert_name, build_env)
 
-          key_pair = ForemanPki::KeyPair.new(cert_name, build_env)
-
-          if cert.ca
+          if certificate.ca
             key_pair.copy(ca)
           else
-            key_pair.create(cert.common_name || common_name, ca)
+            key_pair.create(certificate.common_name || common_name, ca)
 
-            if cert.keystore
+            if certificate.keystore
               key_pair.keystore
             end
 
-            if cert.truststore
-              truststore_build_env = ForemanPki::BuildEnvironment.new(cert.truststore.service || cert.service)
+            if certificate.truststore
+              truststore_build_env = ForemanPki::BuildEnvironment.new(certificate.truststore.service)
               truststore_build_env.create
 
               key_pair.truststore(truststore_build_env)

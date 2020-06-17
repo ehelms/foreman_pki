@@ -6,6 +6,8 @@ require_relative '../lib/foreman_pki.rb'
 class MainCommand < Clamp::Command
   subcommand "generate", "Generate certificates", ForemanPki::Command::GenerateCommand
   subcommand "view", "View a certificate", ForemanPki::Command::ViewCommand
+  subcommand "list", "List all certificates", ForemanPki::Command::ListCommand
+  subcommand "verify", "Verify all certificates", ForemanPki::Command::VerifyCommand
 end
 
 MainCommand.run

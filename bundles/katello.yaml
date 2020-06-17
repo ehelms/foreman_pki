@@ -1,11 +1,15 @@
 ---
-- service: tomcat
+- cert_name: tomcat
+  service: tomcat
   common_name: localhost
   keystore: true
-- service: candlepin
+
+- cert_name: ca
+  service: candlepin
   ca: true
-- service: foreman
-  cert: foreman-to-candlepin
+
+- cert_name: foreman-to-candlepin
+  service: foreman
   common_name: localhost
   truststore:
     service: artemis

@@ -4,22 +4,19 @@ module ForemanPki
       parameter "certificate", "Certificate to view"
 
       def execute
-        build_env = ForemanPki::BuildEnvironment.new
+        config = Config.new
 
-        if @certificate == 'ca'
-          ca = ForemanPki::CertificateAuthority.new(build_env)
-          ca.view
+        cert_config = config.certificates.find do |cert|
+          cert.cert_name == certificate
         end
 
-        if @certificate == 'apache'
-          apache = ForemanPki::ApacheCertificate.new(build_env)
-          apache.view
+        if cert_config.nil?
+          fail("No certificate found named #{certificate}")
         end
 
-        if @certificate == 'foreman-client'
-          client = ForemanPki::ForemanClientCertificate.new(build_env)
-          client.view
-        end
+        build_env = ForemanPki::BuildEnvironment.new(cert_config.service)
+        cert = ForemanPki::KeyPair.new(cert_config.cert_name, build_env)
+        cert.view
       end
     end
   end
