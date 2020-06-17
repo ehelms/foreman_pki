@@ -43,11 +43,7 @@ module ForemanPki
       return OpenSSL::PKey::RSA.new(File.read(key_path)) if File.exist?(key_path)
 
       key = OpenSSL::PKey::RSA.new(KEY_LENGTH)
-
-      File.open("#{@build_env.keys_dir}/#{key_name}", 'w', 0400) do |file|
-        file.write(key.export)
-      end
-
+      write_key(key.export)
       key
     end
 
@@ -111,6 +107,18 @@ module ForemanPki
 
     def view
       puts certificate.to_text
+    end
+
+    def write_certificate(cert)
+      File.open("#{@build_env.certs_dir}/#{cert_name}", 'w', 0444) do |file|
+        file.write(cert)
+      end
+    end
+
+    def write_key(key)
+      File.open("#{@build_env.keys_dir}/#{key_name}", 'w', 0400) do |file|
+        file.write(key)
+      end
     end
 
   end

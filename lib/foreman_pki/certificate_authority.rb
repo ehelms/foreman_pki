@@ -1,21 +1,17 @@
 module ForemanPki
   class CertificateAuthority < KeyPair
 
-    def initialize(build_env = BuildEnvironment.new)
-      @build_env = build_env
-    end
-
-    def key_name
-      "ca.key"
-    end
-
-    def cert_name
-      "ca.crt"
-    end
-
     def create
       private_key
       certificate
+    end
+
+    def import_certificate(import_path)
+      write_certificate(File.read(import_path))
+    end
+
+    def import_key(import_path)
+      write_key(File.read(import_path))
     end
 
     def certificate
@@ -41,10 +37,7 @@ module ForemanPki
       root_ca.add_extension(ef.create_extension("authorityKeyIdentifier", "keyid:always", false))
 
       root_ca.sign(private_key, OpenSSL::Digest::SHA256.new)
-
-      File.open("#{@build_env.certs_dir}/#{cert_name}", 'w', 0444) do |file|
-        file.write(root_ca.to_pem)
-      end
+      write_certificate(root_ca.to_pem)
 
       root_ca
     end

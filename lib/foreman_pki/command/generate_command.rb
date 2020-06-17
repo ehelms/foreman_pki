@@ -12,10 +12,10 @@ module ForemanPki
 
         build_env = ForemanPki::BuildEnvironment.new('ca')
         build_env.create
-        ca = ForemanPki::CertificateAuthority.new(build_env)
+        ca = ForemanPki::CertificateAuthority.new('ca', build_env)
 
         config.certificates.each do |certificate|
-          build_env = ForemanPki::BuildEnvironment.new(cert.service)
+          build_env = ForemanPki::BuildEnvironment.new(certificate.service)
           build_env.create
 
           key_pair = ForemanPki::KeyPair.new(certificate.cert_name, build_env)
