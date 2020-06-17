@@ -14,6 +14,11 @@ module ForemanPki
       write_key(File.read(import_path))
     end
 
+    def import_password(import_password)
+      password = Password.new(@build_env)
+      password.write(import_password)
+    end
+
     def certificate
       cert_path = "#{@build_env.certs_dir}/#{cert_name}"
       return OpenSSL::X509::Certificate.new(File.read(cert_path)) if File.exist?(cert_path)

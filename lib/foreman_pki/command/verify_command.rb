@@ -6,7 +6,7 @@ module ForemanPki
         config = Config.new
 
         build_env = ForemanPki::BuildEnvironment.new('ca')
-        ca = ForemanPki::CertificateAuthority.new(build_env)
+        ca = ForemanPki::CertificateAuthority.new('ca', build_env)
 
         store = OpenSSL::X509::Store.new
         store.add_cert(ca.certificate)

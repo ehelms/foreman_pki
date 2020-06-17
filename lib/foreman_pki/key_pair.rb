@@ -1,12 +1,12 @@
-require 'securerandom'
-
 module ForemanPki
   class KeyPair
 
     KEY_LENGTH = 4096
     EXPIRATION = 2 * 365 * 24 * 60 * 60 # 2 years validity
 
-    def initialize(cert_name, build_env = BuildEnvironment.new)
+    attr_reader :ca
+
+    def initialize(cert_name, build_env)
       @build_env = build_env
       @service = build_env.namespace
       @cert_name = cert_name
@@ -20,12 +20,12 @@ module ForemanPki
       "#{@cert_name}.crt"
     end
 
-    def create(hostname, ca)
-      @hostname = hostname
+    def create(common_name, ca, force = false)
+      @common_name = common_name
       @ca = ca
 
-      private_key
-      certificate
+      private_key(force)
+      certificate(force)
     end
 
     def copy(to_copy)
@@ -37,24 +37,25 @@ module ForemanPki
       end
     end
 
-    def private_key
+    def private_key(force = false)
       key_path = "#{@build_env.keys_dir}/#{key_name}"
 
-      return OpenSSL::PKey::RSA.new(File.read(key_path)) if File.exist?(key_path)
+      password = Password.new(@build_env)
+      return OpenSSL::PKey::RSA.new(File.read(key_path), password.password) if File.exist?(key_path) && !force
 
       key = OpenSSL::PKey::RSA.new(KEY_LENGTH)
       write_key(key.export)
       key
     end
 
-    def certificate
+    def certificate(force = false)
       cert_path = "#{@build_env.certs_dir}/#{cert_name}"
-      return OpenSSL::X509::Certificate.new(File.read(cert_path)) if File.exist?(cert_path)
+      return OpenSSL::X509::Certificate.new(File.read(cert_path)) if File.exist?(cert_path) && !force
 
       cert = OpenSSL::X509::Certificate.new
       cert.version = 2
       cert.serial = rand(2**128)
-      cert.subject = OpenSSL::X509::Name.parse "CN=#{@hostname}"
+      cert.subject = OpenSSL::X509::Name.parse "CN=#{@common_name}"
       cert.issuer = @ca.certificate.subject # root CA is the issuer
       cert.public_key = private_key.public_key
       cert.not_before = Time.now
@@ -70,39 +71,17 @@ module ForemanPki
       cert.add_extension(ef.create_extension("subjectKeyIdentifier", "hash", false))
       cert.sign(@ca.private_key, OpenSSL::Digest::SHA256.new)
 
-      File.open("#{@build_env.certs_dir}/#{cert_name}", 'w', 0444) do |file|
-        file.write(cert.to_pem)
-      end
-
+      write_certificate(cert.to_pem)
       cert
     end
 
     def keystore
-      store = OpenSSL::PKCS12.create(password(@build_env), @service, private_key, certificate, [@ca.certificate])
+      password = Password.new(@build_env)
+      store = OpenSSL::PKCS12.create(password.get_or_create, @service, private_key, certificate, [@ca.certificate])
 
       File.open("#{@build_env.certs_dir}/keystore", 'w', 0400) do |file|
         file.write(store.to_der)
       end
-    end
-
-    def truststore(build_env)
-      store = OpenSSL::PKCS12.create(password(build_env), @service, private_key, certificate, [@ca.certificate])
-
-      File.open("#{build_env.certs_dir}/truststore", 'w', 0400) do |file|
-        file.write(store.to_der)
-      end
-    end
-
-    def password(build_env)
-      password_path = "#{build_env.keys_dir}/password"
-      return File.read(password_path) if File.exist?(password_path)
-
-      password = SecureRandom.base64(15)
-      File.open("#{build_env.keys_dir}/password", 'w', 0400) do |file|
-        file.write(password)
-      end
-
-      password
     end
 
     def view
