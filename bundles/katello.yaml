@@ -13,3 +13,7 @@
   common_name: localhost
   truststore:
     service: artemis
+
+- cert_name: foreman-to-pulp
+  service: foreman
+  common_name: 'admin'
