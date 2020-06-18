@@ -18,6 +18,8 @@ Subcommands:
     list          List all certificates
     verify        Verify all certificates
     import-ca     Import a CA
+    export        Export certificate bundle as a tarball
+    import        Import certificate bundle
 
 Options:
     -h, --help    print help
