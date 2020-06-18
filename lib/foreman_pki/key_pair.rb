@@ -52,7 +52,7 @@ module ForemanPki
       return OpenSSL::PKey::RSA.new(File.read(key_path), password.password) if File.exist?(key_path) && !force
 
       key = OpenSSL::PKey::RSA.new(KEY_LENGTH)
-      write_key(key.export)
+      write_private_key(key.export)
       key
     end
 
