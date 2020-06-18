@@ -9,6 +9,7 @@ class MainCommand < Clamp::Command
   subcommand "list", "List all certificates", ForemanPki::Command::ListCommand
   subcommand "verify", "Verify all certificates", ForemanPki::Command::VerifyCommand
   subcommand "import-ca", "Import a CA", ForemanPki::Command::ImportCaCommand
+  subcommand "export", "Export certificate bundle as a tarball", ForemanPki::Command::ExportCommand
 end
 
 MainCommand.run

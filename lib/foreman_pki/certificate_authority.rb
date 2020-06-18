@@ -10,8 +10,8 @@ module ForemanPki
       write_certificate(File.read(import_path))
     end
 
-    def import_key(import_path)
-      write_key(File.read(import_path))
+    def import_private_key(import_path)
+      write_private_key(File.read(import_path))
     end
 
     def import_password(import_password)

@@ -5,9 +5,10 @@ module ForemanPki
 
     attr_reader :namespace
 
-    def initialize(namespace, config = Config.new)
-      @config = config.config
+    def initialize(namespace, export_namespace = nil)
+      @config = Config.new.config
       @namespace = namespace
+      @export_namespace = export_namespace
     end
 
     def create
@@ -17,15 +18,16 @@ module ForemanPki
     end
 
     def base_dir
-      @config.generate.base_dir
+      return @config.generate.base_dir if @export_namespace.nil?
+      [@config.generate.base_dir, 'exports', @export_namespace].join('/')
     end
 
     def certs_dir
-      "#{base_dir}/#{@namespace}"
+      "#{base_dir}/certs/#{@namespace}"
     end
 
     def keys_dir
-      "#{base_dir}/#{@namespace}"
+      "#{base_dir}/certs/#{@namespace}"
     end
 
   end

@@ -13,7 +13,7 @@ module ForemanPki
 
         ca = ForemanPki::CertificateAuthority.new('ca', build_env)
         ca.import_certificate(ca_cert)
-        ca.import_key(ca_key)
+        ca.import_private_key(ca_key)
         ca.import_password(password) if password
       end
 

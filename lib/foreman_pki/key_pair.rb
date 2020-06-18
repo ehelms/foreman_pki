@@ -28,12 +28,20 @@ module ForemanPki
       certificate(force)
     end
 
-    def copy(to_copy)
-      File.open("#{@build_env.certs_dir}/#{to_copy.cert_name}", 'w', 0444) do |file|
-        file.write(to_copy.certificate.to_pem)
+    def copy(original)
+      copy_certificate(original)
+      copy_private_key(original)
+    end
+
+    def copy_certificate(original)
+      File.open("#{@build_env.certs_dir}/#{original.cert_name}", 'w', 0444) do |file|
+        file.write(original.certificate.to_pem)
       end
-      File.open("#{@build_env.keys_dir}/#{to_copy.key_name}", 'w', 0400) do |file|
-        file.write(to_copy.private_key.to_pem)
+    end
+
+    def copy_private_key(original)
+      File.open("#{@build_env.keys_dir}/#{original.key_name}", 'w', 0400) do |file|
+        file.write(original.private_key.to_pem)
       end
     end
 
@@ -94,7 +102,7 @@ module ForemanPki
       end
     end
 
-    def write_key(key)
+    def write_private_key(key)
       File.open("#{@build_env.keys_dir}/#{key_name}", 'w', 0400) do |file|
         file.write(key)
       end

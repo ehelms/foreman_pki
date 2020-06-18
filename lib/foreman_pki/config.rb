@@ -22,8 +22,14 @@ module ForemanPki
         YAML.load_file("#{BUNDLE_DIR}/#{bundle}.yaml")
       end
 
-      @certificates = @certificates.flatten.sort { |a, b| a['cert_name'] <=> b['cert_name'] }
+      @certificates = sort(@certificates)
       to_openstruct(@certificates)
+    end
+
+    def bundle(name)
+      certificates = YAML.load_file("#{BUNDLE_DIR}/#{name}.yaml")
+      certificates = sort(certificates)
+      to_openstruct(certificates)
     end
 
     def default_config
@@ -39,6 +45,12 @@ module ForemanPki
 
     def to_openstruct(config_hash)
       JSON.parse(config_hash.to_json, object_class: OpenStruct)
+    end
+
+    private
+
+    def sort(certificates)
+      certificates = certificates.flatten.sort { |a, b| a['cert_name'] <=> b['cert_name'] }
     end
 
   end

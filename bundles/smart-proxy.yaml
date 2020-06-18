@@ -1,0 +1,3 @@
+---
+- cert_name: smart-proxy
+  service: smart-proxy
