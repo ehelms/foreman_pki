@@ -1,7 +1,7 @@
 module ForemanPki
   module Command
     class ExportCommand < Clamp::Command
-      option "--common-name", "COMMON_NAME", "Specify the common name (CN) for certificate (defaults to current hostname)", required: true
+      option "--common-name", "COMMON_NAME", "Specify the common name (CN) for exported certificates to have", required: true
       option "--bundle", "BUNDLE", "Specify the certificate bundle to export", required: true
       option "--force", :flag, "Forces generation of certificates even if they already exist. Should be used if changing CA's but must be used with extreme cauation."
 

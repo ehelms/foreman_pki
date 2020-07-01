@@ -1,6 +1,6 @@
 ---
 generate:
-  base_dir: '/etc/foreman_pki'
+  base_dir: '/etc/foreman-pki'
 
 deploy:
   base_dir: '/etc'
