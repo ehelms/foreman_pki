@@ -13,7 +13,7 @@ module ForemanPki
 
       store = OpenSSL::PKCS12.create(password.get_or_create, @build_env.namespace, key_pair.private_key, key_pair.certificate, [key_pair.ca.certificate])
 
-      File.open("#{@build_env.certs_dir}/truststore", 'w', 0400) do |file|
+      File.open("#{@build_env.certs_dir}/truststore", 'w', KeyPair::KEY_PERMISSIONS) do |file|
         file.write(store.to_der)
       end
     end

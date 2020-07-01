@@ -3,6 +3,8 @@ module ForemanPki
 
     KEY_LENGTH = 4096
     EXPIRATION = 2 * 365 * 24 * 60 * 60 # 2 years validity
+    KEY_PERMISSIONS = 0640
+    CERT_PERMISSIONS = 0644
 
     attr_reader :ca
 
@@ -34,13 +36,13 @@ module ForemanPki
     end
 
     def copy_certificate(original)
-      File.open("#{@build_env.certs_dir}/#{original.cert_name}", 'w', 0444) do |file|
+      File.open("#{@build_env.certs_dir}/#{original.cert_name}", 'w', CERT_PERMISSIONS) do |file|
         file.write(original.certificate.to_pem)
       end
     end
 
     def copy_private_key(original)
-      File.open("#{@build_env.keys_dir}/#{original.key_name}", 'w', 0400) do |file|
+      File.open("#{@build_env.keys_dir}/#{original.key_name}", 'w', KEY_PERMISSIONS) do |file|
         file.write(original.private_key.to_pem)
       end
     end
@@ -87,7 +89,7 @@ module ForemanPki
       password = Password.new(@build_env)
       store = OpenSSL::PKCS12.create(password.get_or_create, @service, private_key, certificate, [@ca.certificate])
 
-      File.open("#{@build_env.certs_dir}/keystore", 'w', 0400) do |file|
+      File.open("#{@build_env.certs_dir}/keystore", 'w', KEY_PERMISSIONS) do |file|
         file.write(store.to_der)
       end
     end
@@ -97,13 +99,13 @@ module ForemanPki
     end
 
     def write_certificate(cert)
-      File.open("#{@build_env.certs_dir}/#{cert_name}", 'w', 0444) do |file|
+      File.open("#{@build_env.certs_dir}/#{cert_name}", 'w', CERT_PERMISSIONS) do |file|
         file.write(cert)
       end
     end
 
     def write_private_key(key)
-      File.open("#{@build_env.keys_dir}/#{key_name}", 'w', 0400) do |file|
+      File.open("#{@build_env.keys_dir}/#{key_name}", 'w', KEY_PERMISSIONS) do |file|
         file.write(key)
       end
     end
