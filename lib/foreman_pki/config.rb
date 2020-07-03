@@ -4,7 +4,6 @@ require 'yaml'
 module ForemanPki
   class Config
 
-    CONFIG_FILE = ENV['FOREMAN_PKI_CONFIG_FILE'] || "#{File.expand_path(File.dirname(__FILE__))}/../../config.yaml"
     BUNDLE_DIR = "#{File.expand_path(File.dirname(__FILE__))}/../../bundles"
 
     def initialize
@@ -12,11 +11,14 @@ module ForemanPki
     end
 
     def config
-      if File.exist?(CONFIG_FILE)
-        @config ||= to_openstruct(YAML.load_file(CONFIG_FILE))
-      else
-        @config ||= default_config
-      end
+      root_path = "#{File.expand_path(File.dirname(__FILE__))}/../../"
+
+      config_file = "#{root_path}/config.yaml.example"
+      config_file = "#{root_path}/../../config.yaml" if File.exist?("#{root_path}/../../config.yaml")
+      config_file = '/etc/foreman-pki/config.yaml' if File.exist?('/etc/foreman-pki/config.yaml')
+      config_file = ENV['FOREMAN_PKI_CONFIG_FILE'] if ENV['FOREMAN_PKI_CONFIG_FILE']
+
+      @config ||= to_openstruct(YAML.load_file(config_file))
     end
 
     def certificates
@@ -37,12 +39,6 @@ module ForemanPki
     end
 
     private
-
-    def default_config
-      to_openstruct({
-        base_dir: '_etc/foreman-pki',
-      })
-    end
 
     def to_openstruct(config_hash)
       JSON.parse(config_hash.to_json, object_class: OpenStruct)

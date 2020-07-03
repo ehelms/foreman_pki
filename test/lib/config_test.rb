@@ -2,7 +2,7 @@ require "test_helper"
 
 class ConfigTest < Minitest::Test
   def setup
-    ENV['FOREMAN_PKI_CONFIG_FILE'] = "#{File.expand_path(File.dirname(__FILE__))}/fixtures/config.yaml"
+    ENV['FOREMAN_PKI_CONFIG_FILE'] = "#{File.expand_path(File.dirname(__FILE__))}/../fixtures/config.yaml"
     @config = ForemanPki::Config.new
   end
 
