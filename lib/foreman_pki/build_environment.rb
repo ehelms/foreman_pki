@@ -18,8 +18,8 @@ module ForemanPki
     end
 
     def base_dir
-      return @config.generate.base_dir if @export_namespace.nil?
-      [@config.generate.base_dir, 'exports', @export_namespace].join('/')
+      return @config.base_dir if @export_namespace.nil?
+      [@config.base_dir, 'exports', @export_namespace].join('/')
     end
 
     def certs_dir
