@@ -1,9 +1,5 @@
 ---
-generate:
-  base_dir: '/etc/foreman-pki'
-
-deploy:
-  base_dir: '/etc'
+base_dir: '/etc/foreman-pki'
 
 bundles:
   - foreman

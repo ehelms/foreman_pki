@@ -6,8 +6,6 @@ module ForemanPki
       option "--password", "PASSWORD", "Password protecting the CA key being imported. Only required if the CA key being imported is password protected"
 
       def execute
-        config = Config.new
-
         build_env = ForemanPki::BuildEnvironment.new('ca')
         build_env.create
 

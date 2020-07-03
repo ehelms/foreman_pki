@@ -7,16 +7,20 @@ module ForemanPki
     CONFIG_FILE = ENV['FOREMAN_PKI_CONFIG_FILE'] || "#{File.expand_path(File.dirname(__FILE__))}/../../config.yaml"
     BUNDLE_DIR = "#{File.expand_path(File.dirname(__FILE__))}/../../bundles"
 
+    def initialize
+      @certificates = []
+    end
+
     def config
       if File.exist?(CONFIG_FILE)
         @config ||= to_openstruct(YAML.load_file(CONFIG_FILE))
       else
-        @config = default_config
+        @config ||= default_config
       end
     end
 
     def certificates
-      return @certificates unless @certificates.nil?
+      return @certificates unless @certificates.empty?
 
       @certificates = config.bundles.collect do |bundle|
         YAML.load_file("#{BUNDLE_DIR}/#{bundle}.yaml")
@@ -27,27 +31,22 @@ module ForemanPki
     end
 
     def bundle(name)
-      certificates = YAML.load_file("#{BUNDLE_DIR}/#{name}.yaml")
-      certificates = sort(certificates)
-      to_openstruct(certificates)
+      certs = YAML.load_file("#{BUNDLE_DIR}/#{name}.yaml")
+      certs = sort(certs)
+      to_openstruct(certs)
     end
+
+    private
 
     def default_config
       to_openstruct({
-        generate: {
-          base_dir: '_etc/foreman_pki',
-        },
-        deploy: {
-          base_dir: '_etc'
-        }
+        base_dir: '_etc/foreman-pki',
       })
     end
 
     def to_openstruct(config_hash)
       JSON.parse(config_hash.to_json, object_class: OpenStruct)
     end
-
-    private
 
     def sort(certificates)
       certificates = certificates.flatten.sort { |a, b| a['cert_name'] <=> b['cert_name'] }
