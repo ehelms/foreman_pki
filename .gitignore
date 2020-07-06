@@ -7,8 +7,8 @@
 /spec/reports/
 /tmp/
 /foreman_pki/
-etc/
 
+_etc/
 config.yaml
 
 Gemfile.lock

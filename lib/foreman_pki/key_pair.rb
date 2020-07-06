@@ -22,6 +22,14 @@ module ForemanPki
       "#{@cert_name}.crt"
     end
 
+    def private_key_path
+      "#{@build_env.keys_dir}/#{key_name}"
+    end
+
+    def certificate_path
+      "#{@build_env.certs_dir}/#{cert_name}"
+    end
+
     def create(common_name, ca, force = false)
       @common_name = common_name
       @ca = ca
@@ -48,10 +56,8 @@ module ForemanPki
     end
 
     def private_key(force = false)
-      key_path = "#{@build_env.keys_dir}/#{key_name}"
-
       password = Password.new(@build_env)
-      return OpenSSL::PKey::RSA.new(File.read(key_path), password.password) if File.exist?(key_path) && !force
+      return OpenSSL::PKey::RSA.new(File.read(private_key_path), password.password) if private_key_exist? && !force
 
       key = OpenSSL::PKey::RSA.new(KEY_LENGTH)
       write_private_key(key.export)
@@ -59,8 +65,7 @@ module ForemanPki
     end
 
     def certificate(force = false)
-      cert_path = "#{@build_env.certs_dir}/#{cert_name}"
-      return OpenSSL::X509::Certificate.new(File.read(cert_path)) if File.exist?(cert_path) && !force
+      return OpenSSL::X509::Certificate.new(File.read(certificate_path)) if certificate_exist? && !force
 
       cert = OpenSSL::X509::Certificate.new
       cert.version = 2
@@ -94,18 +99,26 @@ module ForemanPki
       end
     end
 
+    def certificate_exist?
+      File.exist?(certificate_path)
+    end
+
+    def private_key_exist?
+      File.exist?(private_key_path)
+    end
+
     def view
       puts certificate.to_text
     end
 
     def write_certificate(cert)
-      File.open("#{@build_env.certs_dir}/#{cert_name}", 'w', CERT_PERMISSIONS) do |file|
+      File.open(certificate_path, 'w', CERT_PERMISSIONS) do |file|
         file.write(cert)
       end
     end
 
     def write_private_key(key)
-      File.open("#{@build_env.keys_dir}/#{key_name}", 'w', KEY_PERMISSIONS) do |file|
+      File.open(private_key_path, 'w', KEY_PERMISSIONS) do |file|
         file.write(key)
       end
     end

@@ -1,5 +1,5 @@
 ---
-base_dir: '/etc/foreman-pki'
+base_dir: '_etc/foreman-pki'
 
 bundles:
   - foreman
