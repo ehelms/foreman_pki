@@ -2,7 +2,6 @@ require 'securerandom'
 
 module ForemanPki
   class Password
-
     PASSWORD_SIZE = 15
 
     def initialize(build_env)
@@ -14,8 +13,9 @@ module ForemanPki
       return File.read(@path) if exist?
     end
 
-    def get_or_create(force = false)
+    def get_or_create(_force = false)
       return password if exist?
+
       create
       password
     end
@@ -25,7 +25,7 @@ module ForemanPki
     end
 
     def write(pass)
-      File.open("#{@build_env.keys_dir}/password", 'w', 0400) do |file|
+      File.open("#{@build_env.keys_dir}/password", 'w', 0o400) do |file|
         file.write(pass)
       end
     end
@@ -33,6 +33,5 @@ module ForemanPki
     def exist?
       File.exist?(@path)
     end
-
   end
 end

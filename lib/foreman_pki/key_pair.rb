@@ -1,10 +1,9 @@
 module ForemanPki
   class KeyPair
-
     KEY_LENGTH = 4096
     EXPIRATION = 2 * 365 * 24 * 60 * 60 # 2 years validity
-    KEY_PERMISSIONS = 0640
-    CERT_PERMISSIONS = 0644
+    KEY_PERMISSIONS = 0o0640
+    CERT_PERMISSIONS = 0o644
 
     attr_reader :ca
 
@@ -80,11 +79,11 @@ module ForemanPki
       ef.subject_certificate = cert
       ef.issuer_certificate = @ca.certificate
 
-      cert.add_extension(ef.create_extension("basicConstraints","CA:FALSE", true))
-      cert.add_extension(ef.create_extension("keyUsage","digitalSignature,keyEncipherment", true))
-      cert.add_extension(ef.create_extension("extendedKeyUsage","serverAuth,clientAuth", true))
+      cert.add_extension(ef.create_extension("basicConstraints", "CA:FALSE", true))
+      cert.add_extension(ef.create_extension("keyUsage", "digitalSignature,keyEncipherment", true))
+      cert.add_extension(ef.create_extension("extendedKeyUsage", "serverAuth,clientAuth", true))
       cert.add_extension(ef.create_extension("subjectKeyIdentifier", "hash", false))
-      cert.sign(@ca.private_key, OpenSSL::Digest::SHA256.new)
+      cert.sign(@ca.private_key, OpenSSL::Digest.new('SHA256'))
 
       write_certificate(cert.to_pem)
       cert
@@ -122,6 +121,5 @@ module ForemanPki
         file.write(key)
       end
     end
-
   end
 end

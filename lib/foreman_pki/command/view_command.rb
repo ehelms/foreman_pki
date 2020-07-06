@@ -11,7 +11,7 @@ module ForemanPki
         end
 
         if cert_config.nil?
-          fail("No certificate found named #{certificate}")
+          raise("No certificate found named #{certificate}")
         end
 
         build_env = ForemanPki::BuildEnvironment.new(cert_config.service)

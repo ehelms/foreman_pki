@@ -1,8 +1,15 @@
 module ForemanPki
   module Command
     class GenerateCommand < Clamp::Command
-      option "--common-name", "COMMON_NAME", "Specify the common name (CN) for certificate (defaults to current hostname)"
-      option "--force", :flag, "Forces generation of certificates even if they already exist. Should be used if changing CA's but must be used with extreme cauation."
+      option "--common-name",
+             "COMMON_NAME",
+             "Specify the common name (CN) for certificate (defaults to current hostname)"
+      option "--force",
+             :flag,
+             [
+               "Forces generation of certificates even if they already exist.",
+               "Should be used if changing CA's but must be used with extreme cauation."
+             ].join(' ')
 
       def default_common_name
         `hostname`
@@ -15,7 +22,7 @@ module ForemanPki
         build_env.create
 
         ca = ForemanPki::CertificateAuthority.new('ca', build_env)
-        puts "Generating CA" if !ca.certificate_exist?
+        puts "Generating CA" unless ca.certificate_exist?
         ca.create
 
         config.certificates.each do |certificate|
@@ -25,7 +32,7 @@ module ForemanPki
           key_pair = KeyPair.new(certificate.cert_name, build_env)
 
           puts "Generating #{certificate.cert_name}" if !force? && !key_pair.certificate_exist?
-          puts "Skipping #{certificate.cert_name}. Certificate already exists." if !force? && key_pair.certificate_exist?
+          puts "Skipping #{certificate.cert_name}. Certificate exists." if !force? && key_pair.certificate_exist?
           puts "Force regenerating #{certificate.cert_name}" if force?
 
           if certificate.ca

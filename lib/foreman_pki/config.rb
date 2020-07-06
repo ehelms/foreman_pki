@@ -3,15 +3,14 @@ require 'yaml'
 
 module ForemanPki
   class Config
-
-    BUNDLE_DIR = "#{File.expand_path(File.dirname(__FILE__))}/../../bundles"
+    BUNDLE_DIR = "#{__dir__}/../../bundles".freeze
 
     def initialize
       @certificates = []
     end
 
     def config
-      root_path = "#{File.expand_path(File.dirname(__FILE__))}/../../"
+      root_path = "#{__dir__}/../../"
 
       config_file = "#{root_path}/config.yaml.example"
       config_file = "#{root_path}/../../config.yaml" if File.exist?("#{root_path}/../../config.yaml")
@@ -44,9 +43,8 @@ module ForemanPki
       JSON.parse(config_hash.to_json, object_class: OpenStruct)
     end
 
-    def sort(certificates)
-      certificates = certificates.flatten.sort { |a, b| a['cert_name'] <=> b['cert_name'] }
+    def sort(certs)
+      certs.flatten.sort { |a, b| a['cert_name'] <=> b['cert_name'] }
     end
-
   end
 end

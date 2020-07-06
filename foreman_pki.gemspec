@@ -1,5 +1,4 @@
-
-lib = File.expand_path("../lib", __FILE__)
+lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require "foreman_pki/version"
 
@@ -9,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Eric D. Helms"]
   spec.email         = ["ericdhelms@gmail.com"]
 
-  spec.summary       = %q{Create certificates for Foreman}
-  spec.description   = %q{Create certificates for Foreman}
+  spec.summary       = 'Create certificates for Foreman'
+  spec.description   = 'Create certificates for Foreman'
   spec.homepage      = "https://theforeman.org"
 
   spec.files         = `git ls-files -z`.split("\x0").reject do |f|
@@ -22,6 +21,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "clamp"
 
-  spec.add_development_dependency "rake"
   spec.add_development_dependency "minitest", "~> 5.0"
+  spec.add_development_dependency "rake"
+  spec.add_development_dependency "rubocop"
 end

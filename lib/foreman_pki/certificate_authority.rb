@@ -1,6 +1,7 @@
+require 'foreman_pki/key_pair'
+
 module ForemanPki
   class CertificateAuthority < KeyPair
-
     def create
       private_key
       certificate
@@ -41,11 +42,10 @@ module ForemanPki
       root_ca.add_extension(ef.create_extension("subjectKeyIdentifier", "hash", false))
       root_ca.add_extension(ef.create_extension("authorityKeyIdentifier", "keyid:always", false))
 
-      root_ca.sign(private_key, OpenSSL::Digest::SHA256.new)
+      root_ca.sign(private_key, OpenSSL::Digest.new('SHA256'))
       write_certificate(root_ca.to_pem)
 
       root_ca
     end
-
   end
 end

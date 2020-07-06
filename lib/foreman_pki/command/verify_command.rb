@@ -1,7 +1,6 @@
 module ForemanPki
   module Command
     class VerifyCommand < Clamp::Command
-
       def execute
         config = Config.new
 
@@ -20,7 +19,6 @@ module ForemanPki
           puts "#{certificate.cert_name}: #{store.error_string}"
         end
       end
-
     end
   end
 end
