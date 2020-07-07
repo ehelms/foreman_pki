@@ -22,7 +22,7 @@ module ForemanPki
     end
 
     def private_key_path
-      "#{@build_env.keys_dir}/#{key_name}"
+      "#{@build_env.certs_dir}/#{key_name}"
     end
 
     def certificate_path
@@ -49,7 +49,7 @@ module ForemanPki
     end
 
     def copy_private_key(original)
-      File.open("#{@build_env.keys_dir}/#{original.key_name}", 'w', KEY_PERMISSIONS) do |file|
+      File.open("#{@build_env.certs_dir}/#{original.key_name}", 'w', KEY_PERMISSIONS) do |file|
         file.write(original.private_key.to_pem)
       end
     end

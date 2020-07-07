@@ -6,7 +6,7 @@ module ForemanPki
 
     def initialize(build_env)
       @build_env = build_env
-      @path = "#{@build_env.keys_dir}/password"
+      @path = "#{@build_env.certs_dir}/password"
     end
 
     def password
@@ -17,15 +17,16 @@ module ForemanPki
       return password if exist?
 
       create
-      password
     end
 
     def create
-      write(SecureRandom.base64(PASSWORD_SIZE))
+      pass = SecureRandom.base64(PASSWORD_SIZE)
+      write(pass)
+      pass
     end
 
     def write(pass)
-      File.open("#{@build_env.keys_dir}/password", 'w', 0o400) do |file|
+      File.open("#{@build_env.certs_dir}/password", 'w', 0o400) do |file|
         file.write(pass)
       end
     end
