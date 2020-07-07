@@ -13,7 +13,6 @@ module ForemanPki
     def create
       FileUtils.mkdir_p(base_dir)
       FileUtils.mkdir_p(certs_dir)
-      FileUtils.mkdir_p(keys_dir)
     end
 
     def base_dir
@@ -23,10 +22,6 @@ module ForemanPki
     end
 
     def certs_dir
-      "#{base_dir}/certs/#{@namespace}"
-    end
-
-    def keys_dir
       "#{base_dir}/certs/#{@namespace}"
     end
   end
